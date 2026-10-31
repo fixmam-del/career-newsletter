@@ -1,0 +1,241 @@
+.newsletter {
+  font-family: "Malgun Gothic", Arial, sans-serif;
+  background: white;
+  color: #172d4e;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+  font-size: 16px;
+}
+.newsletter * {
+  box-sizing: border-box;
+}
+.doc-head {
+  position: relative;
+  overflow: hidden;
+  padding: 36px 40px;
+  min-height: 240px;
+  background: var(--accent);
+  color: var(--head-ink);
+}
+.doc-head:after {
+  content: "";
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  right: -160px;
+  top: var(--decoration-top, -90px);
+  border: 1px solid currentColor;
+  border-radius: var(--decoration-round, 50%);
+  transform: rotate(var(--decoration-turn, 0deg));
+  opacity: 0.3;
+  box-shadow:
+    0 0 0 35px #ffffff12,
+    0 0 0 70px #ffffff0d;
+  pointer-events: none;
+}
+.doc-brand {
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.doc-logo {
+  max-width: 100px;
+  max-height: 50px;
+}
+.doc-month {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  margin: 24px 0 4px;
+}
+.doc-head h1 {
+  font-size: 32px;
+  line-height: 1.35;
+  letter-spacing: -0.05em;
+  margin: 4px 0 12px;
+  max-width: 95%;
+  position: relative;
+  z-index: 1;
+}
+.doc-head p {
+  margin: 0;
+  font-size: 15px;
+}
+.doc-header-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+.doc-section {
+  padding: 28px 32px 0;
+}
+.doc-section h2 {
+  font-size: 21px;
+  letter-spacing: -0.04em;
+  border-bottom: 2px solid #172d4e;
+  padding-bottom: 12px;
+  margin: 0 0 18px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.doc-section h2 span {
+  color: #005bac;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.doc-card {
+  border-bottom: 1px solid #e7ebef;
+  padding: 0 0 24px;
+  margin: 0 0 24px;
+  break-inside: avoid;
+}
+.doc-card h3 {
+  font-size: 20px;
+  line-height: 1.5;
+  margin: 8px 0 12px;
+  letter-spacing: -0.025em;
+}
+.doc-card p {
+  white-space: pre-wrap;
+  margin: 8px 0;
+}
+.doc-card dl {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  font-size: 14px;
+  gap: 8px 12px;
+  margin: 16px 0;
+}
+.doc-card dt {
+  color: #5b6878;
+}
+.doc-card dd {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.doc-card img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin: 12px 0;
+}
+.doc-badge {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1.7;
+  background: #e9f0f8;
+  color: #005bac;
+  padding: 3px 9px;
+  border-radius: 4px;
+  margin: 0 6px 4px 0;
+}
+.doc-badge.urgent {
+  color: #9f1239;
+  background: #fff0f2;
+}
+.doc-badge.recommended {
+  background: #d9f9ee;
+  color: #172d4e;
+}
+.doc-link {
+  display: inline-block;
+  background: #005bac;
+  color: #fff;
+  padding: 9px 18px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.doc-attachment {
+  font-size: 13px;
+  display: block;
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+  color: #005bac;
+}
+.print-url {
+  display: none;
+}
+.doc-foot {
+  padding: 30px 32px;
+  background: #f1f5f9;
+  font-size: 13px;
+  margin-top: 32px;
+  color: #5b6878;
+}
+.doc-foot strong {
+  color: #172d4e;
+}
+.doc-foot p {
+  margin: 5px 0;
+}
+@media (max-width: 500px) {
+  .doc-head {
+    padding: 24px;
+    min-height: 180px;
+  }
+  .doc-head h1 {
+    font-size: 26px;
+  }
+  .doc-header-image {
+    height: 180px;
+  }
+  .doc-section {
+    padding: 24px 20px 0;
+  }
+  .doc-foot {
+    padding: 24px 20px;
+  }
+  .doc-card dl {
+    grid-template-columns: 64px 1fr;
+  }
+  .doc-section h2 {
+    font-size: 19px;
+  }
+}
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  body {
+    margin: 0;
+  }
+  .newsletter {
+    max-width: none;
+  }
+  .doc-head {
+    background: white !important;
+    color: #172d4e !important;
+    border-bottom: 2px solid #172d4e;
+  }
+  .doc-head:after {
+    display: none;
+  }
+  .doc-card {
+    break-inside: avoid;
+  }
+  .doc-card.tall {
+    break-inside: auto;
+  }
+  .print-url {
+    display: block;
+    font-size: 11px;
+    color: #172d4e;
+    word-break: break-all;
+  }
+  .doc-link {
+    background: white;
+    color: #005bac;
+    border: 1px solid #005bac;
+  }
+  .doc-badge {
+    border: 1px solid currentColor;
+  }
+}

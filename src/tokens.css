@@ -1,0 +1,26 @@
+/* 토토구구 콘셉트 디자인 토큰 — 공식 대학 CI가 아닙니다. */
+:root {
+  --tg-color-primary: #005bac;
+  --tg-color-primary-hover: #004989;
+  --tg-color-navy: #172d4e;
+  --tg-color-accent: #42dbb0;
+  --tg-color-surface: #f1f5f9;
+  --tg-color-background: #ffffff;
+  --tg-color-ink: #182332;
+  --tg-color-muted: #75808e;
+  --tg-color-line: #e7ebef;
+  --tg-font-family: "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+  --tg-font-display: 56px;
+  --tg-font-heading: 32px;
+  --tg-font-body: 16px;
+  --tg-space-1: 4px;
+  --tg-space-2: 8px;
+  --tg-space-4: 16px;
+  --tg-space-6: 24px;
+  --tg-space-8: 32px;
+  --tg-space-12: 48px;
+  --tg-radius-small: 5px;
+  --tg-radius-medium: 9px;
+  --tg-radius-large: 13px;
+  --tg-layout-max-width: 1600px;
+}

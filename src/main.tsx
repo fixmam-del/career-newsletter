@@ -16,16 +16,20 @@ import {
   Settings2,
   HardDrive,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { ListPage } from "./List";
 import { EditorPage } from "./Editor";
 import { RecurringPage } from "./Recurring";
 import { SettingsPage } from "./Settings";
+import { AdminPage } from "./Admin";
+import { AiChatPage } from "./AiChat";
 import { Notices } from "./ui";
 import { db, getSettings, cleanup } from "./storage";
 import { editor } from "./store";
 import "./tokens.css";
 import "./style.css";
+import "./ai.css";
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { error: string }
@@ -136,6 +140,10 @@ function App() {
             <Settings2 size={17} />
             설정·백업
           </NavLink>
+          <NavLink to="/ai-chat" onClick={(e) => void nav(e, "/ai-chat")}>
+            <Sparkles size={17} />
+            AI 채팅
+          </NavLink>
         </nav>
         <span className="header-local">
           <span className="status-dot" />
@@ -156,6 +164,8 @@ function App() {
           <Route path="/newsletters/:id" element={<EditorPage />} />
           <Route path="/recurring" element={<RecurringPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/ai-chat" element={<AiChatPage />} />
           <Route path="*" element={<Navigate to="/newsletters" replace />} />
         </Routes>
       )}
@@ -165,8 +175,9 @@ function App() {
             <b>월간 커리어</b> · 당신의 다음 이야기를 함께.
           </span>
           <span>
-            LOCAL FIRST <span className="footer-dot">·</span> MADE FOR YOUR NEXT
-            CHAPTER <ArrowUpRight size={14} />
+            <NavLink to="/admin">관리자</NavLink>{" "}
+            <span className="footer-dot">·</span> MADE FOR YOUR NEXT CHAPTER{" "}
+            <ArrowUpRight size={14} />
           </span>
         </footer>
       )}

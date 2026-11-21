@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup:admin": "node scripts/setup-admin.mjs",
     "dev": "vite --host localhost --port 5173 --strictPort",
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
@@ -11,6 +12,11 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.107",
+    "@ai-sdk/google": "^4.0.124",
+    "@ai-sdk/openai": "^4.0.122",
+    "@vercel/blob": "^2.9.0",
+    "ai": "^7.0.179",
     "dexie": "^4.4.7",
     "fflate": "^0.8.3",
     "html-to-image": "^1.11.13",
@@ -32,5 +38,10 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "@vercel/cli-config": {
+      "zod": "^4.6.7"
+    }
   }
 }

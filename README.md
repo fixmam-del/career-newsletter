@@ -4,7 +4,7 @@
 
 ## 설치와 실행
 
-Node.js 22.12 이상 또는 호환되는 최신 LTS와 npm이 필요합니다. 이 프로젝트는 Node.js 24 환경에서 검증했습니다. 별도 API 키·환경 변수·백엔드·회원가입은 없습니다.
+Node.js 24와 npm이 필요합니다. 뉴스레터 편집은 별도 설정 없이 실행할 수 있습니다. AI 채팅은 관리자 서버 설정과 제공업체 API 키가 필요합니다.
 
 ```powershell
 cd 'C:\국민대 프로젝트\newsletter'
@@ -21,7 +21,40 @@ npm run test:e2e
 npm run build
 ```
 
-E2E는 Windows에 설치된 Microsoft Edge를 사용합니다. Edge가 없다면 Playwright의 브라우저를 설치하고 `playwright.config.ts`의 `channel`을 환경에 맞게 변경해야 합니다. 최초 npm 설치에는 인터넷이 필요합니다. 설치 이후 편집·저장·출력은 외부 서비스에 접속하지 않습니다. 개발 서버를 실행한 상태에서 사용하세요. `file://`로 편집 앱을 실행하는 방식은 지원하지 않습니다.
+E2E는 Windows에 설치된 Microsoft Edge를 사용합니다. Edge가 없다면 Playwright의 브라우저를 설치하고 `playwright.config.ts`의 `channel`을 환경에 맞게 변경해야 합니다. 최초 npm 설치에는 인터넷이 필요합니다. 뉴스레터 편집·저장·출력은 로컬에서 처리하며, AI 채팅은 선택한 제공업체에 메시지를 전송합니다. 개발 서버를 실행한 상태에서 사용하세요. `file://`로 편집 앱을 실행하는 방식은 지원하지 않습니다.
+
+## 관리자 및 AI 채팅
+
+주요 사용자는 뉴스레터를 작성하는 관리자입니다. 관리자 로그인 → 제공업체 키·모델 등록 → AI 선택 → 제목·초안·문장 다듬기 순서로 사용합니다. 일반 방문자는 기존 뉴스레터 기능을 사용하고, 채팅 및 키 설정 API는 관리자 세션이 있어야 사용할 수 있습니다.
+
+- 운영 관리자: [관리자 설정](https://career-newsletter.vercel.app/#/admin), [AI 채팅](https://career-newsletter.vercel.app/#/ai-chat). 관리자 아이디는 `FIXMAM`이며 비밀번호는 별도로 전달한 값으로 서버에 설정했습니다. 원문 비밀번호와 API 키는 저장소에 포함하지 않습니다.
+- OpenAI, Claude(Anthropic), Gemini(Google)를 각각 등록할 수 있습니다. 기본 모델은 `gpt-6.2-sol`, `claude-sonnet-5-5`, `gemini-4-hydrogen`이며 계정에서 사용 가능한 모델 ID로 변경할 수 있습니다.
+- API 키는 암호화해 서버에 저장하며 관리 화면에는 등록 여부만 반환합니다. 빈 키로 저장하면 기존 키를 유지하고, **키 삭제**는 명시적으로 삭제합니다. 저장은 API 연결 검사와 다릅니다. 실제 대화 전송 시 제공업체 요금·잔액·모델 권한이 적용됩니다.
+- 대화는 현재 화면의 메모리에만 보관합니다. 새로고침·페이지 이동 시 지워집니다. 뉴스레터·첨부를 자동으로 전송하지 않으며 입력한 텍스트와 최근 대화만 선택한 제공업체에 전달합니다. 사실·일정은 직접 확인하세요.
+- 최대 입력 6,000자, 전송 문맥 24,000자, 최근 12개 메시지, 답변 최대 3,000토큰, 서버 대기 약 50초입니다. 로그인은 8시간 유지되고, 로그인 시도 및 채팅 요청에는 서버의 지속 저장형 횟수 제한이 적용됩니다.
+
+새 PC의 로컬 AI 실행 설정:
+
+```powershell
+npm run setup:admin
+npm run dev
+```
+
+설정 명령은 비밀번호를 숨겨 입력받아 scrypt 해시와 무작위 암호화·세션 키를 `.env.local`에 생성합니다. 기존 파일은 덮어쓰지 않습니다. 이미 설정된 현재 작업 PC에서는 다시 실행할 필요가 없습니다. 로컬 API는 Vite 미들웨어로 동작하며 키 설정은 `.local-ai/state.enc`에 암호화해 저장합니다. 로컬·운영 설정은 각각 독립적입니다. 둘 다 Git에서 제외합니다. 프로세스 비정상 종료로 로컬 잠금 파일이 남았다면 서버를 종료한 뒤 `.local-ai/state.lock`만 제거하고 재시작하세요.
+
+Vercel에는 `api/session.ts`, `api/providers.ts`, `api/chat.ts`가 Node Functions로 배포됩니다. 서버 전용 환경 변수:
+
+| 변수 | 용도 |
+|---|---|
+| `AI_ADMIN_ID` | 관리자 아이디 |
+| `AI_ADMIN_PASSWORD_HASH` | `scrypt:소금값:64바이트해시의hex` |
+| `AI_SESSION_SECRET` | 32자 이상 무작위 세션 서명 키 |
+| `AI_ENCRYPTION_KEY` | 32바이트 무작위 키의 Base64 |
+| `BLOB_READ_WRITE_TOKEN` | 프로젝트에 연결된 **private** Vercel Blob 토큰 |
+
+Vercel 운영·미리보기 환경에 설정하고 재배포해야 적용됩니다. 현재 운영 프로젝트에는 서버 비밀 설정과 private Blob 연결을 완료했습니다. 새 프로젝트는 private Blob을 연결하고 설정 명령이 생성한 서버 변수들을 Vercel 환경 변수로 등록하세요. 서버 비밀에 `VITE_` 접두사를 붙이면 안 됩니다. 암호화 키는 기존 암호문을 읽는 데 필요하므로 백업 없이 교체하면 기존 API 키를 복구할 수 없습니다. 미리보기를 별도 운영할 때는 저장소와 암호화 키도 별도로 구성하세요. 뉴스레터 ZIP 백업에는 AI 설정·대화·API 키가 포함되지 않습니다.
+
+구현에 확인한 공식 자료: [OpenAI Responses 및 텍스트 생성](https://developers.openai.com/api/docs/guides/text), [Claude Messages](https://platform.claude.com/docs/en/api/messages/create), [Gemini 텍스트 생성](https://aistudio.google.com/docs/text-generation), [Vercel Blob SDK와 조건부 쓰기](https://vercel.com/docs/vercel-blob/using-blob-sdk), [Vercel Node Functions](https://vercel.com/docs/functions/runtimes/node-js).
 
 ## 바로 체험하기
 
@@ -90,7 +123,7 @@ E2E는 Windows에 설치된 Microsoft Edge를 사용합니다. Edge가 없다면
 
 실제로 실행한 결과와 미확인 사항은 [검증 기록](./VALIDATION.md)을 참고하세요. Windows Edge를 자동 검증 기준으로 사용했습니다. Chrome 계열의 최신 브라우저를 권장하지만 설치된 브라우저 외의 버전별 실기기 검증을 완료한 것으로 간주하지 않습니다.
 
-후속 범위인 설치형 PWA/개발 서버 종료 후 오프라인 재실행, 인쇄창 없는 직접 PDF 다운로드, 일괄 작업, 서버·협업·이메일 발송은 제공하지 않습니다. 앱 편집은 localhost 개발 서버 실행이 필요하고, 내보낸 HTML은 독립 실행됩니다.
+후속 범위인 설치형 PWA/개발 서버 종료 후 오프라인 재실행, 인쇄창 없는 직접 PDF 다운로드, 일괄 작업, 뉴스레터 서버 동기화·협업·이메일 발송은 제공하지 않습니다. 앱 편집은 localhost 또는 Vercel에서 실행하며, 내보낸 HTML은 독립 실행됩니다.
 
 ## 구현 구조와 디자인 결정
 
@@ -100,6 +133,6 @@ E2E는 Windows에 설치된 Microsoft Edge를 사용합니다. Edge가 없다면
 - 날짜는 서울 날짜 문자열과 달력 정수 차이로 처리합니다. 날짜 유틸을 위해 별도 라이브러리를 추가하지 않았습니다.
 - 시스템 한국어 글꼴을 사용해 외부 폰트 요청을 없앴습니다. 토토구구 토큰은 `src/tokens.css`, 반응형 UI는 `src/style.css`, 독자 화면·출력은 `src/document.css`에 있습니다.
 - 테마는 기본 레이아웃을 공유하고 색·문구·곡선의 각도·모양을 바꿉니다. 장식은 내용과 겹치지 않으며 모션 감소를 존중합니다.
-- CSP는 `index.html`에 적용합니다. 정적 서버로 배포한다면 같은 정책을 HTTP `Content-Security-Policy` 헤더로도 전달하고 개발용 WebSocket 허용을 제거하세요. 외부 서버 공개는 이 작업의 범위에 포함하지 않았습니다.
+- CSP는 `index.html`에 적용하며 AI 호출은 같은 출처의 서버 API를 거칩니다. 제공업체 SDK와 비밀키는 클라이언트 번들에 포함하지 않습니다.
 
 기술 구현 확인에 사용한 1차 자료: [React 공식 문서](https://react.dev/learn), [Vite 공식 가이드](https://vite.dev/guide/), [Dexie 트랜잭션 문서](https://dexie.org/docs/Transaction/Transaction). 실제 의존성 버전은 설치 시 npm registry에서 확인해 `package-lock.json`에 고정했습니다.
